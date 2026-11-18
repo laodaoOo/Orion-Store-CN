@@ -41,7 +41,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 /** One thing Orion does. [go] jumps straight to it, when it has a home of its own. */
-private class Feature(val icon: ImageVector, @StringRes val title: Int, @StringRes val body: Int, val go: (MainViewModel.() -> Unit)? = null)
+class Feature(val icon: ImageVector, @StringRes val title: Int, @StringRes val body: Int, val go: (MainViewModel.() -> Unit)? = null)
 
 private class Chapter(val id: String, @StringRes val title: Int, @StringRes val blurb: Int, val icon: ImageVector, val color: Color, val shape: RoundedPolygon, val features: List<Feature>)
 

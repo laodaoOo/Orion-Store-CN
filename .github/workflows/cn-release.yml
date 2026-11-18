@@ -1,0 +1,45 @@
+﻿name: CN Release
+
+on:
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Release tag, e.g. cn-2.7.5'
+        required: true
+        default: 'cn-2.7.5'
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+
+      - name: Throwaway signing key
+        run: |
+          keytool -genkeypair -keystore orion-cn.keystore -alias orioncn \
+            -keyalg RSA -keysize 2048 -validity 10000 \
+            -storepass orioncn2026 -keypass orioncn2026 \
+            -dname "CN=Orion Store CN Unofficial, O=Community, C=CN"
+          printf 'storeFile=orion-cn.keystore\nstorePassword=orioncn2026\nkeyAlias=orioncn\nkeyPassword=orioncn2026\n' > keystore.properties
+
+      - name: Build release APK
+        run: |
+          chmod +x gradlew
+          ./gradlew :app:assembleRelease --no-daemon --stacktrace
+
+      - name: Publish GitHub release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          cp app/build/outputs/apk/release/app-release.apk "Orion-Store-CN-${{ inputs.tag }}.apk"
+          gh release create "${{ inputs.tag }}" "Orion-Store-CN-${{ inputs.tag }}.apk" \
+            --title "Orion Store 中文版 ${{ inputs.tag }}（非官方构建）" \
+            --notes-file .github/cn-release-notes.md

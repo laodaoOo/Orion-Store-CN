@@ -81,7 +81,6 @@ import com.orion.store.findActivity
 import com.orion.store.data.*
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
-import com.orion.store.R
 import com.orion.store.platform.DhizukuBridge
 import com.orion.store.platform.Installer
 import com.orion.store.platform.OrionAi
@@ -519,7 +518,7 @@ fun SettingsScreen(vm: MainViewModel) {
                     "visuals" -> {
                         Section(stringResource(R.string.settings_language)) {
                             val lctx = LocalContext.current
-                            val langOptions = listOf("" to stringResource(R.string.settings_language_system_default), "en" to "English", "es" to "Español", "zh-CN" to "中文", "ja" to "日本語", "ru" to "Русский", "hi" to "हिन्दी", "ar" to "العربية", "tl" to "Tagalog", "fr" to "Français", "pl" to "Polski")
+                            val langOptions = listOf("" to stringResource(R.string.settings_language_system_default), "en" to "English", "es" to "Español", "zh-CN" to "中文", "ja" to "日本�?, "ru" to "Русский", "hi" to "हिन्दी", "ar" to "العربية", "tl" to "Tagalog", "fr" to "Français", "pl" to "Polski")
                             var showLang by remember { mutableStateOf(false) }
                             val currentLang = langOptions.firstOrNull { it.first == Lang.tag(lctx) }?.second ?: langOptions[0].second
                             SRow(Sym.Translate, stringResource(R.string.settings_language), currentLang, onClick = { showLang = true }) { Chevron() }
@@ -1462,7 +1461,7 @@ private fun ScannerSheet(apps: List<AppItem>, onDismiss: () -> Unit) = OrionShee
                         Card(shape = RoundedCornerShape(20.dp), colors = CardDefaults.cardColors(MaterialTheme.colorScheme.errorContainer.copy(.4f))) {
                             Column(Modifier.padding(14.dp)) {
                                 Text(r.appName, fontWeight = FontWeight.Bold); Text(r.appId, style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
-                                r.issues.forEach { Text("• $it", style = MaterialTheme.typography.bodySmall, modifier = Modifier.padding(top = 4.dp)) }
+                                r.issues.forEach { Text("�?$it", style = MaterialTheme.typography.bodySmall, modifier = Modifier.padding(top = 4.dp)) }
                             }
                         }
                     }

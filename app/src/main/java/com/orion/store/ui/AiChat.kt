@@ -113,7 +113,7 @@ class AiSession {
                 val turns = history.map { OrionAi.Turn(it.user, it.raw) } + OrionAi.Turn(true, q + "\n\nOn this phone: $mine\n" + OrionAi.describe(catalog, ids, if (local) 24 else 110) +
                     if (local) OrionAi.guideMatches(guideText, q, 3).joinToString("") { "\nOrion guide g$it ${guideText[it].first}: ${guideText[it].second}" } else "")
                 val show: (String) -> Unit = { t -> reply.text = OrionAi.parse(t).reply }
-                val raw = if (local) LocalLlm.chat(vm.getApplication(), LocalLlm.model(s.aiLocalModel) ?: throw AiError(vm.getApplication().getString(R.string.ai_pick_on_device_model)), system, turns, show)
+                val raw = if (local) LocalLlm.chat(vm.getApplication(), LocalLlm.model(s.aiLocalModel) ?: throw AiError(vm.getApplication<android.app.Application>().getString(R.string.ai_pick_on_device_model)), system, turns, show)
                     else OrionAi.stream(p, s.aiKeys[p.id].orEmpty(), s.aiModels[p.id].orEmpty(), s.aiBaseUrl, system, turns, show)
                 val ans = OrionAi.parse(raw)
                 reply.raw = raw; reply.text = ans.reply; reply.apps = ans.picks.mapNotNull { catalog.getOrNull(it) }.distinctBy { it.id }.take(6)
@@ -124,7 +124,7 @@ class AiSession {
                 throw e
             } catch (e: Exception) {
                 messages.remove(reply)
-                messages += AiMsg(false, (e as? AiError)?.message ?: vm.getApplication().getString(R.string.ai_something_went_wrong, e.message ?: e.javaClass.simpleName), error = true)
+                messages += AiMsg(false, (e as? AiError)?.message ?: vm.getApplication<android.app.Application>().getString(R.string.ai_something_went_wrong, e.message ?: e.javaClass.simpleName), error = true)
                 if (vm.s.aiSounds) AiSound.error(); vm.haptic(H.ERROR)
             } finally { busy = false }
         }
@@ -165,7 +165,7 @@ object AiSound {
 
 private val AI_SHAPES = listOf(MaterialShapes.Cookie9Sided, MaterialShapes.Sunny, MaterialShapes.Clover4Leaf, MaterialShapes.Gem, MaterialShapes.Flower, MaterialShapes.SoftBurst)
 /** Starter prompts, a few per topic: one row of topics, three prompts for the picked one. */
-private val STARTERS: List<Triple<ImageVector, @StringRes Int, List<@StringRes Int>>> = listOf(
+private val STARTERS: List<Triple<ImageVector, Int, List<Int>>> = listOf(
     Triple(Sym.MusicNote, R.string.ai_starter_topic_music, listOf(R.string.ai_starter_music_free, R.string.ai_starter_music_offline, R.string.ai_starter_music_youtube)),
     Triple(Sym.Movie, R.string.ai_starter_topic_watch, listOf(R.string.ai_starter_watch_movies, R.string.ai_starter_watch_youtube_no_ads, R.string.ai_starter_watch_anime)),
     Triple(Sym.Shield, R.string.ai_starter_topic_privacy, listOf(R.string.ai_starter_privacy_block_ads, R.string.ai_starter_privacy_browser, R.string.ai_starter_privacy_messaging)),
@@ -319,7 +319,7 @@ private fun Waiting() = Row(verticalAlignment = Alignment.CenterVertically) {
     }
 }
 
-private val WAITING: List<@StringRes Int> = listOf(R.string.ai_waiting_catalog, R.string.ai_waiting_matching, R.string.ai_waiting_reading, R.string.ai_waiting_picking, R.string.ai_waiting_almost)
+private val WAITING: List<Int> = listOf(R.string.ai_waiting_catalog, R.string.ai_waiting_matching, R.string.ai_waiting_reading, R.string.ai_waiting_picking, R.string.ai_waiting_almost)
 
 @Composable
 private fun AiAppCard(vm: MainViewModel, app: AppItem, i: Int, n: Int) {
@@ -441,7 +441,7 @@ fun AiSettingsSheet(vm: MainViewModel, onDismiss: () -> Unit) = OrionSheet(onDis
 }
 
 private val CLOUD = AiProvider.entries - AiProvider.LOCAL
-private val PROVIDER_NOTES: Map<AiProvider, @StringRes Int> = mapOf(AiProvider.GEMINI to R.string.ai_provider_note_gemini, AiProvider.OPENAI to R.string.ai_provider_note_openai, AiProvider.CLAUDE to R.string.ai_provider_note_claude,
+private val PROVIDER_NOTES: Map<AiProvider, Int> = mapOf(AiProvider.GEMINI to R.string.ai_provider_note_gemini, AiProvider.OPENAI to R.string.ai_provider_note_openai, AiProvider.CLAUDE to R.string.ai_provider_note_claude,
     AiProvider.OPENROUTER to R.string.ai_provider_note_openrouter, AiProvider.GROQ to R.string.ai_provider_note_groq, AiProvider.DEEPSEEK to R.string.ai_provider_note_deepseek,
     AiProvider.MISTRAL to R.string.ai_provider_note_mistral, AiProvider.CUSTOM to R.string.ai_provider_note_custom)
 
